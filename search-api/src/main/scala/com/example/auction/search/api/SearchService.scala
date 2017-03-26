@@ -15,7 +15,7 @@ trait SearchService extends Service {
   def search(pageNo: Int, pageSize: Int): ServiceCall[SearchRequest, SearchResponse]
 }
 
-case class SearchRequest(keywords: Option[String], maxPrice: Option[Int], currency: Option[String])
+case class SearchRequest(keywords: Option[String], maxPrice: Option[BigDecimal], currency: Option[String])
 
 case class SearchResponse(items: Seq[SearchItem], pageSize: Int, pageNo: Int, numResults: Int)
 
@@ -23,7 +23,7 @@ case class SearchItem(id: UUID,
                       creatorId: UUID,
                       title: String,
                       description: String,
-                      temStatus: String,
+                      itemStatus: String,
                       currencyId: String,
                       price: Option[Int]
                       // auctionStart:Option[Instant] // TODO: add auctionStart and AuctionEnd

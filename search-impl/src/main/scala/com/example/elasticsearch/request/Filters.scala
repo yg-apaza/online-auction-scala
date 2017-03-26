@@ -26,7 +26,7 @@ object Filters {
 
   def keywords(keywords: Option[String]): Option[Filter] = keywords.map(kw => KeywordsFilter(kw))
 
-  def maxPrice(maxPrice: Option[Int], currency: Option[String]): Seq[Option[Filter]] = {
+  def maxPrice(maxPrice: Option[BigDecimal], currency: Option[String]): Seq[Option[Filter]] = {
     Seq(
       maxPrice.map(mp => PriceRangeFilter(RangeInt(Some(mp)))),
       currency.map(CurrencyFilter.apply)
@@ -67,7 +67,7 @@ object PriceRangeFilter {
 // -------------------------------------------------------------------------------------------
 
 
-case class RangeInt(lte: Option[Int], gte: Option[Int] = None)
+case class RangeInt(lte: Option[BigDecimal], gte: Option[BigDecimal] = None)
 
 object RangeInt {
   implicit val format: Format[RangeInt] = Json.format

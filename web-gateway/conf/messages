@@ -17,10 +17,17 @@ status=Auction status
 duration=Auction duration
 durationUnits=Units
 createItem=Create item
+searchItems=Search Items
 
+keywords=Exact terms: 
+maximumPrice=Maximum Price (set to '0' to disable filter)
+maximumPriceCurrency=
+searchFoundCount={0} items found
+searchFoundCountWithPagination=Displaying {0} of {1} items found
+
+invalid.maxPrice.positive.or.zero=Please put valid price
 invalid.increment=The increment must be a multiple of 0.5.
 invalid.reserve=The reserve must be a multiple of 0.5.
-
 seller=Seller
 auctionStart=Auction start
 auctionEnd=Auction end

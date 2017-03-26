@@ -1,0 +1,81 @@
+@import helper._
+@import java.util.Optional
+@import com.example.auction.item.api.ItemStatus
+@import com.example.auction.utils.PaginatedSequence
+@import com.example.auction.search.api.SearchItem
+@import controllers.Currency
+@import controllers.{Currency => Currencies}
+
+@(searchItemForm: Form[SearchItemForm], results: Optional[PaginatedSequence[SearchItem]])(implicit nav: Nav)
+
+@main(Messages("searchItems")) {
+
+    <h2>@Messages("searchItems")</h2>
+
+    @foundationForm(searchItemForm, routes.SearchController.search(), 'id -> "searchForm") {
+        <div class="column row">
+            @inputText(searchItemForm("keywords"), 'placeholder -> "laptop")
+        </div>
+        <div class="column row">
+            @inputText(searchItemForm("maximumPrice"), 'type -> "number", 'min -> 0)
+            @select(
+                field = searchItemForm("maximumPriceCurrency"),
+                options = Currencies.values.map(c => c.name -> c.getDisplayName).sortBy(_._2)
+            )
+        </div>
+        <input type="submit" class="button" value="@Messages("search")"/>
+
+        <input type="hidden" id="pageNumber" value="@searchItemForm("pageNumber").value" name="@searchItemForm("pageNumber").name"/>
+
+        @if(results.isPresent) {
+            <script>
+                var updatePage = function(pageNum){
+                    document.getElementById("pageNumber").value = pageNum;
+                    document.getElementById("searchForm").submit();
+                }
+            </script>
+            @if(results.get().pageSize < results.get.count) {
+                <div>@Messages("searchFoundCountWithPagination", results.get().pageSize, results.get.count)</div>
+            } else {
+                <div>@Messages("searchFoundCount", results.get.count)</div>
+            }
+            <table>
+
+            <thead>
+                <tr>
+                    <th>@Messages("title")</th>
+                    <th>@Messages("status")</th>
+                    <th>@Messages("currentPrice")</th>
+                </tr>
+            </thead>
+
+                <tbody>
+                @for(item <- results.get.items) {
+                    @defining(Currency.valueOf(item.currencyId)) { currency =>
+                        <tr>
+                            <td>
+                                <a href="@routes.ItemController.getItem(item.id)">@item.title</a>
+                            </td>
+                            <td>@item.itemStatus</td>
+                            <td>
+                            @if(
+                                item.itemStatus == ItemStatus.Auction
+                                        && item.price.get > 0) {
+                                @currency.format(item.price.get)
+                            } else {
+                                -
+                            }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">@item.description</td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+            @paginate(results.get)((pageNumber, pageSize) => routes.SearchController.searchForm())
+        }
+
+    }
+}
