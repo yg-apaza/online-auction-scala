@@ -29,17 +29,18 @@ class SearchController(messagesApi: MessagesApi, userService: UserService, searc
           })
         },
         searchForm => {
-          withUser(loadNav(_).map { implicit nav =>
-            searchService.search(searchForm.pageNumber, 15).invoke(SearchRequest(
+          withUser(userId => for {
+            nav <- loadNav(userId)
+            searchResult <- searchService.search(searchForm.pageNumber, 15).invoke(SearchRequest(
               Some(searchForm.keywords),
               Some(searchForm.maximumPrice),
-              Some(searchForm.maximumPriceCurrency.name))).map { searchResult => {
-              Ok(views.html.searchItem(SearchItemForm.fill(SearchItemForm()), Optional.of(new PaginatedSequence[SearchItem](
-                searchResult.items,
-                searchResult.pageNo,
-                searchResult.pageSize,
-                searchResult.numResults))))
-            }}
+              Some(searchForm.maximumPriceCurrency.name)))
+          } yield{
+            Ok(views.html.searchItem(SearchItemForm.fill(SearchItemForm()), Optional.of(new PaginatedSequence[SearchItem](
+              searchResult.items,
+              searchResult.pageNo,
+              searchResult.pageSize,
+              searchResult.numResults)))(nav))
           })
         }
       )

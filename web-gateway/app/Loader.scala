@@ -1,5 +1,6 @@
 import com.example.auction.bidding.api.BiddingService
 import com.example.auction.item.api.ItemService
+import com.example.auction.search.api.SearchService
 import com.example.auction.user.api.UserService
 import com.lightbend.lagom.scaladsl.api.ServiceLocator.NoServiceLocator
 import com.lightbend.lagom.scaladsl.api.{ServiceAcl, ServiceInfo}
@@ -10,7 +11,7 @@ import play.api.ApplicationLoader.Context
 import play.api.i18n.I18nComponents
 import play.api.libs.ws.ahc.AhcWSComponents
 import com.softwaremill.macwire._
-import controllers.{Assets, ItemController, Main, ProfileController}
+import controllers.{Assets, ItemController, Main, ProfileController, SearchController}
 import router.Routes
 
 import scala.collection.immutable
@@ -36,10 +37,12 @@ abstract class WebGateway(context: Context) extends BuiltInComponentsFromContext
   lazy val userService = serviceClient.implement[UserService]
   lazy val itemService = serviceClient.implement[ItemService]
   lazy val biddingService = serviceClient.implement[BiddingService]
+  lazy val searchService = serviceClient.implement[SearchService]
 
   lazy val main = wire[Main]
   lazy val itemController = wire[ItemController]
   lazy val profileController = wire[ProfileController]
+  lazy val searchController = wire[SearchController]
   lazy val assets = wire[Assets]
 }
 
